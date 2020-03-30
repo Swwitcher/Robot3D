@@ -123,21 +123,21 @@ int main(int argc, char *argv[])
         totalSize += bytesRecv;
         if(totalSize > sizeMaxImage){
             //on save l'image
-
+            cout << "salut " << totalSize << endl;
             totalSize = 0;
             n = 0;
             char* msg = "coucou";
             send(clientSocket,msg,strlen(msg),0);
-            break;
         }
-
-        if(string(buf, 0, bytesRecv) == "quit"){
+        else if(string(buf, 0, bytesRecv) == "quit"){
+            cout << "salut 1" << totalSize << endl;
             char* msg = "Tchou";
             send(clientSocket,msg,strlen(msg),0);
             cout << "client disconnected !" << endl;
             break;
         }
         else{
+            cout << "salut 2" << totalSize << endl;
             char* msg = "Roger !";
             send(clientSocket,msg,strlen(msg),0);
             //message d'erreur
@@ -146,7 +146,6 @@ int main(int argc, char *argv[])
 //            }
 //            n++;
         }
-
     }
     close(clientSocket);
     //close socket
