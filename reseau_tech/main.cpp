@@ -36,10 +36,9 @@ static int width, height = 480;
 
 void bytesToMat(char* bytes,int width,int height)
 {
-    Mat image = Mat(height,width,CV_8UC3,bytes).clone(); // make a copy
+    Mat image(width, height, CV_8UC1, &bytes);
     imshow("test",image);
 }
-
 
 int main(int argc, char *argv[])
 {
@@ -86,7 +85,7 @@ int main(int argc, char *argv[])
     int result = getnameinfo((sockaddr*)&client, sizeof(client), host, NI_MAXHOST, server, NI_MAXSERV, 0);
 
     if(result){
-        cout << "host connecteing on " << result << endl;
+        cout << "host connecting on " << result << endl;
     }
     else{
         inet_ntop(AF_INET, &client.sin_addr, host, NI_MAXHOST);
@@ -99,9 +98,9 @@ int main(int argc, char *argv[])
     int error = 0;
     bool imageL = true;
     int sizeMaxImage = height*width*8;
+
     int totalSize = 0;
-    int n = 0;
-    unsigned char *image = new unsigned char[height*width];
+    char *image = new char[height*width];
 
     while(true){
         //clear buffer
@@ -118,27 +117,29 @@ int main(int argc, char *argv[])
             break;
         }
 
-        cout << "received a message : " << string(buf, 0, bytesRecv) << endl;
-        cout << " : " << buf << endl;
-        cout << (char)buf[1] << endl;
+        cout << "Début réception des données : " << string(buf, 0, bytesRecv) << endl;
+
+        for(int i = 0; i < sizeof(buf); i++){
+            image[totalSize+i] = buf[i];
+        }
 
         totalSize += bytesRecv;
         if(totalSize >= sizeMaxImage){
             //on save l'image
-            cout << "salut " << totalSize << endl;
+            cout << "Image received ! " << totalSize << endl;
+            bytesToMat(image,width,height);
             totalSize = 0;
-            n = 0;
-            char* msg = "coucou";
+            char* msg = "packet receive !";
             send(clientSocket,msg,strlen(msg),0);
         }
         else if(string(buf, 0, bytesRecv) == "quit"){
-            char* msg = "Tchou";
+            char* msg = "Conection terminated !";
             send(clientSocket,msg,strlen(msg),0);
-            cout << "client disconnected !" << endl;
+            cout << "Client disconnected !" << endl;
             break;
         }
         else{
-            char* msg = "Roger !";
+            char* msg = "Image packet received !";
             send(clientSocket,msg,strlen(msg),0);
             totalSize = 0;
         }
