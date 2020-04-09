@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
     int error = 0;
     bool imageL = true;
     int sizeMaxImage = height*width*8;
-    int totalSize;
+    int totalSize = 0;
     int n = 0;
     unsigned char *image = new unsigned char[height*width];
 
@@ -118,10 +118,12 @@ int main(int argc, char *argv[])
             break;
         }
 
-        //cout << "received a message : " << string(buf, 0, bytesRecv) << endl;
-        //cout << " : " << bytesRecv << endl;
+        cout << "received a message : " << string(buf, 0, bytesRecv) << endl;
+        cout << " : " << buf << endl;
+        cout << (char)buf[1] << endl;
+
         totalSize += bytesRecv;
-        if(totalSize > sizeMaxImage){
+        if(totalSize >= sizeMaxImage){
             //on save l'image
             cout << "salut " << totalSize << endl;
             totalSize = 0;
@@ -130,21 +132,15 @@ int main(int argc, char *argv[])
             send(clientSocket,msg,strlen(msg),0);
         }
         else if(string(buf, 0, bytesRecv) == "quit"){
-            cout << "salut 1" << totalSize << endl;
             char* msg = "Tchou";
             send(clientSocket,msg,strlen(msg),0);
             cout << "client disconnected !" << endl;
             break;
         }
         else{
-            cout << "salut 2" << totalSize << endl;
             char* msg = "Roger !";
             send(clientSocket,msg,strlen(msg),0);
-            //message d'erreur
-//            for(int i = 0; i < bytesRecv; i++){
-//                image[i+(n*4096)] = buf[i];
-//            }
-//            n++;
+            totalSize = 0;
         }
     }
     close(clientSocket);
