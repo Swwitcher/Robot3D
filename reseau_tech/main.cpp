@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
     }
 
     //while receiv data
-    char buf[4096];
+    char buf[4800];
     int bytesRecv = 1;
     int error = 0;
     bool imageL = true;
@@ -85,10 +85,10 @@ int main(int argc, char *argv[])
 
     while(true){
         //clear buffer
-        memset(buf, 0, 4096);
+        memset(buf, 0, 4800);
 
         //wait for a message
-        bytesRecv = recv(clientSocket, buf, 4096, 0);
+        bytesRecv = recv(clientSocket, buf, 4800, 0);
         if(bytesRecv == -1){
             cerr << "Connection issue" << endl;
             break;
@@ -105,7 +105,13 @@ int main(int argc, char *argv[])
         }
 
         totalSize += bytesRecv;
-        if(totalSize >= sizeMaxImage){
+        if(string(buf, 0, bytesRecv) == "quit"){
+                    char* msg = "Conection terminated !";
+                    send(clientSocket,msg,strlen(msg),0);
+                    cout << "Client disconnected !" << endl;
+                    break;
+        }
+        else if(totalSize >= sizeMaxImage){
             //on save l'image
             cout << "Image received ! " << totalSize << endl;
             bytesToMat(image,width,height);
@@ -113,16 +119,12 @@ int main(int argc, char *argv[])
             char* msg = "packet receive !";
             send(clientSocket,msg,strlen(msg),0);
         }
-        else if(string(buf, 0, bytesRecv) == "quit"){
-            char* msg = "Conection terminated !";
-            send(clientSocket,msg,strlen(msg),0);
-            cout << "Client disconnected !" << endl;
-            break;
-        }
         else{
+            cout << "Début réception des données : " << string(buf, 0, bytesRecv) << endl;
+            cout << "Taille reçue = " << bytesRecv << endl;
             char* msg = "Image packet received !";
             send(clientSocket,msg,strlen(msg),0);
-            totalSize = 0;
+            //totalSize = 0;
         }
     }
     close(clientSocket);
