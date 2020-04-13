@@ -15,22 +15,8 @@
 
 using namespace std;
 using namespace cv;
-/*
-void disparityCard(Mat left, Mat right){
-    //Mat dispCard, res;
-    if(!left.empty() && !right.empty()){
-        //calibrateWithParameter(i);
-        //Ptr<StereoSGBM> steRes = StereoSGBM::create(0,64,10);
-        //steRes->setMode(StereoSGBM::MODE_SGBM_3WAY);
-        //steRes->compute(srcL,srcR,dispCard);
-        //normalize(dispCard,res,0,255,CV_MINMAX,CV_8U);
-        //imshow("carte de disparité",res);
-        //waitKey(0);
-    }
-}
-*/
 
-static int width, height = 480;
+static int width = 480, height = 480;
 
 //fonction trouvé sur https://answers.opencv.org/question/33596/convert-mat-to-byte-in-c/?answer=33603
 
@@ -68,9 +54,7 @@ int main(int argc, char *argv[])
     socklen_t clientsize = sizeof(client);
     char host[NI_MAXHOST];
     char server[NI_MAXSERV];
-
     int clientSocket = accept(listening, (sockaddr*) &client, &clientsize);
-
     if(clientSocket == -1) {
         cerr << "Problem with client connecting" << endl;
         return -4;
@@ -78,12 +62,9 @@ int main(int argc, char *argv[])
 
     //close listening socket.
     close(listening);
-
     memset(host, 0, NI_MAXHOST);
     memset(server, 0, NI_MAXSERV);
-
     int result = getnameinfo((sockaddr*)&client, sizeof(client), host, NI_MAXHOST, server, NI_MAXSERV, 0);
-
     if(result){
         cout << "host connecting on " << result << endl;
     }
@@ -92,7 +73,7 @@ int main(int argc, char *argv[])
         cout << host <<" connected on " << ntohs(client.sin_port) << endl;
     }
 
-    //while receiv
+    //while receiv data
     char buf[4096];
     int bytesRecv = 1;
     int error = 0;
@@ -105,9 +86,9 @@ int main(int argc, char *argv[])
     while(true){
         //clear buffer
         memset(buf, 0, 4096);
+
         //wait for a message
         bytesRecv = recv(clientSocket, buf, 4096, 0);
-
         if(bytesRecv == -1){
             cerr << "Connection issue" << endl;
             break;
@@ -117,7 +98,7 @@ int main(int argc, char *argv[])
             break;
         }
 
-        cout << "Début réception des données : " << string(buf, 0, bytesRecv) << endl;
+        //cout << "Début réception des données : " << string(buf, 0, bytesRecv) << endl;
 
         for(int i = 0; i < sizeof(buf); i++){
             image[totalSize+i] = buf[i];
