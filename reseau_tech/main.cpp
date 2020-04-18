@@ -17,8 +17,8 @@ using namespace std;
 using namespace cv;
 
 static int width = 480, height = 480;
-
 //fonction trouvé sur https://answers.opencv.org/question/33596/convert-mat-to-byte-in-c/?answer=33603
+
 
 void bytesToMat(char* bytes,int width,int height)
 {
@@ -73,6 +73,7 @@ int main(int argc, char *argv[])
         cout << host <<" connected on " << ntohs(client.sin_port) << endl;
     }
 
+
     //while receiv data
     char buf[4800];
     int bytesRecv = 1;
@@ -81,9 +82,17 @@ int main(int argc, char *argv[])
     int sizeMaxImage = height*width*8;
 
     int totalSize = 0;
-    char *image = new char[height*width];
+    int cpt_row = 1;
+
+    Mat image(480,480, CV_8UC3, Scalar(0,0,0));
+    if(image.empty()){
+        cout << "erreur lors de la création de l'image" << endl;
+    }
+    imshow("test", image);
+    waitKey(0);
 
     while(true){
+
         //clear buffer
         memset(buf, 0, 4800);
 
@@ -100,23 +109,20 @@ int main(int argc, char *argv[])
 
         //cout << "Début réception des données : " << string(buf, 0, bytesRecv) << endl;
 
-        for(int i = 0; i < sizeof(buf); i++){
-            image[totalSize+i] = buf[i];
-        }
-
         totalSize += bytesRecv;
+
         if(string(buf, 0, bytesRecv) == "quit"){
-                    char* msg = "Conection terminated !";
-                    send(clientSocket,msg,strlen(msg),0);
-                    cout << "Client disconnected !" << endl;
-                    break;
+            char* msg = "Conection terminated !";
+            send(clientSocket,msg,strlen(msg),0);
+            cout << "Client disconnected !" << endl;
+            break;
         }
         else if(totalSize >= sizeMaxImage){
             //on save l'image
             cout << "Image received ! " << totalSize << endl;
-            bytesToMat(image,width,height);
+            //bytesToMat(image,width,height);
             totalSize = 0;
-            char* msg = "packet receive !";
+            char* msg = "All packet receive !";
             send(clientSocket,msg,strlen(msg),0);
         }
         else{
