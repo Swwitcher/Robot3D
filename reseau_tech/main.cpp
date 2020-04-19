@@ -17,12 +17,15 @@ using namespace std;
 using namespace cv;
 
 static int width = 480, height = 480;
+static int sizeMaxImage = height*width;
+static int bufferSize = 4800;
+
 //fonction trouvé sur https://answers.opencv.org/question/33596/convert-mat-to-byte-in-c/?answer=33603
-
-
-void bytesToMat(char* bytes,int width,int height)
+//Convertie un tableau à deux dimension en une image Mat
+void bytesToMat(char** bytes,int width,int height)
 {
-    Mat image(width, height, CV_8UC1, &bytes);
+    Mat image(width, height, CV_8UC1);
+    memcpy(image.data, bytes, sizeMaxImage*sizeof(char));
     imshow("test",image);
 }
 
@@ -75,29 +78,31 @@ int main(int argc, char *argv[])
 
 
     //while receiv data
-    char buf[4800];
-    int bytesRecv = 1;
-    int error = 0;
-    bool imageL = true;
-    int sizeMaxImage = height*width*8;
+    char buf[bufferSize];     //buffer qui stocke les données reçu par le client
+    int bytesRecv = 0;  //nb d'octet reçu par le serveur
 
-    int totalSize = 0;
-    int cpt_row = 1;
+    int totalSize = 0;  //nb total d'octet reçu
+    int cpt_row = 1;    //cpt de ligne
 
     Mat image(480,480, CV_8UC3, Scalar(0,0,0));
     if(image.empty()){
         cout << "erreur lors de la création de l'image" << endl;
     }
-    imshow("test", image);
-    waitKey(0);
+
+    //on créer un tablau en 2 dimensions pour stocker chaque octet de l'image
+    char **image2D = new char*[height];
+    for(int i = 0; i < height;i++ ){
+        image2D[i] = new char[width];
+    }
+
 
     while(true){
 
         //clear buffer
-        memset(buf, 0, 4800);
+        memset(buf, 0, bufferSize);
 
         //wait for a message
-        bytesRecv = recv(clientSocket, buf, 4800, 0);
+        bytesRecv = recv(clientSocket, buf, bufferSize, 0);
         if(bytesRecv == -1){
             cerr << "Connection issue" << endl;
             break;
@@ -111,26 +116,32 @@ int main(int argc, char *argv[])
 
         totalSize += bytesRecv;
 
+        //si on reçoit un message du client pour arreter le serveur
         if(string(buf, 0, bytesRecv) == "quit"){
             char* msg = "Conection terminated !";
             send(clientSocket,msg,strlen(msg),0);
             cout << "Client disconnected !" << endl;
-            break;
+            return 0;
         }
         else if(totalSize >= sizeMaxImage){
             //on save l'image
             cout << "Image received ! " << totalSize << endl;
             //bytesToMat(image,width,height);
             totalSize = 0;
+            cpt_row == 0;
             char* msg = "All packet receive !";
             send(clientSocket,msg,strlen(msg),0);
         }
         else{
             cout << "Début réception des données : " << string(buf, 0, bytesRecv) << endl;
             cout << "Taille reçue = " << bytesRecv << endl;
+            for(int i = 0; i < bytesRecv; i++){
+                if(i%width == 0 && i != 0)
+                    cpt_row++;
+                image2D[cpt_row][i] = buf[i];
+            }
             char* msg = "Image packet received !";
             send(clientSocket,msg,strlen(msg),0);
-            //totalSize = 0;
         }
     }
     close(clientSocket);
