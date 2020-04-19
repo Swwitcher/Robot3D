@@ -3,6 +3,8 @@
 #include <string>
 #include <unistd.h>
 
+#include <imageprocessing.h>
+
 //include socket
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -78,6 +80,8 @@ int main(int argc, char *argv[])
 
 
     //while receiv data
+    ImageProcessing imgProcess = new ImageProcessing();
+
     char buf[bufferSize];     //buffer qui stocke les données reçu par le client
     int bytesRecv = 0;  //nb d'octet reçu par le serveur
 
