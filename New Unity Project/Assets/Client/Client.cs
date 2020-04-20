@@ -19,24 +19,26 @@ public class Client : MonoBehaviour {
 	private System.Text.ASCIIEncoding encoded = new System.Text.ASCIIEncoding ();
 
 	void Awake(){
-		serverSocket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+		/*serverSocket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 		IPAddress remoteIPAdress = IPAddress.Parse (serverIp);
 		IPEndPoint remoteEndPoint = new IPEndPoint (remoteIPAdress, port);
 		singleton = this;
-		serverSocket.Connect (remoteEndPoint);
+		serverSocket.Connect (remoteEndPoint); */
 
-		//Test//
+		//Tests
+		byte[] tab = getCameraBytes(leftCam);
+		for(int i=0; i< imageSidePx*imageSidePx; i++)
+			print(System.Convert.ToInt64(tab[i]) + "\n");
 
-		serverSocket.Send (pixelMapToByteMap(getCamPixelTab(leftCam)));
-	
-		//End//
+		Application.Quit();
+
 	}
-
-	void Update(){
-		if (isConnected != serverSocket.Connected)
-			isConnected = serverSocket.Connected;
+	// void Update(){
 		
-		/*
+		/*if (isConnected != serverSocket.Connected)
+			isConnected = serverSocket.Connected;
+		*/
+		/* /!\ Convert CHAR to BYTE , NOT INT
 		//Send image 1 to server
 		serverSocket.Send (pixelMapToByteMap(getCamPixelTab(leftCam)));
 		//Waiting for server answer
@@ -47,36 +49,53 @@ public class Client : MonoBehaviour {
 		while (serverSocket.Receive (recv) == 0);
 		*/
 		
+	// }
+
+	// void OnApplicationQuit(){
+		/*serverSocket.Close ();
+		serverSocket = null;  */
+	// }
+
+	Texture2D getImage(Camera cam){
+		Rect view = cam.pixelRect;
+		Texture2D texture = new Texture2D((int)view.width, (int)view.height, TextureFormat.RGB24, false);
+		texture.ReadPixels(view, 0, 0, false);
+		texture.Apply(false);
+		return texture;
 	}
 
-	void OnApplicationQuit(){
-		serverSocket.Close ();
-		serverSocket = null; 
+	Color[] getColorMap(Texture2D texture){
+		int i = 0;
+		Color[] res = new Color[texture.width*texture.height];
+		for(int y=0; y<texture.height; y++){
+			for(int x=0; x<texture.width; x++){
+				res[i] = texture.GetPixel(x, y);
+				i++;
+			}
+		}
+		return res;
 	}
 
-
-	Color[] getCamPixelTab(Camera cam){
-		Texture2D texture = new Texture2D (imageSidePx, imageSidePx);
-		RenderTexture rt = new RenderTexture (imageSidePx, imageSidePx, 16);
-		cam.targetTexture = rt;
-		Rect src = new Rect (0, 0, imageSidePx, imageSidePx);
-		cam.Render ();
-		RenderTexture.active = rt;
-		texture.ReadPixels (src, 0, 0);
-		Color[] result = texture.GetPixels();
-		return result;
+	byte[] colorToByteMap(Color[] map){
+		byte[] res = new byte[map.Length];
+		char c;
+		int gray;
+		byte b;
+		for(int i=0; i<map.Length; i++){
+			//Set to grayscale
+			gray = (int)(map[i].r + map[i].g + map[i].b)/3;
+			//Conversions 
+			c = System.Convert.ToChar(gray);
+			b = System.Convert.ToByte(c);
+			//Assign
+			res[i] = b;
+		}
+		return res;
 	}
 
-	int colorToGray(Color pixel){
-		return (int)((pixel.r + pixel.g + pixel.b) / 3); 
-	}
-
-	byte[] pixelMapToByteMap(Color[] map){
-		byte[] result = new byte[imageSidePx*imageSidePx];
-		for (int i = 0; i < imageSidePx * imageSidePx; i++)
-			result [i] = System.Convert.ToByte(colorToGray (map [i]));
-		return result;
-	}
-
-
+	byte[] getCameraBytes(Camera cam){
+		Texture2D t = getImage(cam);
+		Color[] cMap = getColorMap(t);
+		return colorToByteMap(cMap);
+	} 
 }
