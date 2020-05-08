@@ -93,7 +93,7 @@ int MainWindow::forward_or_backward(int base_value, cv::Mat dispmap){
  * @return 1 if the object is on the right, -1 on the left, 0 center
  */
 int MainWindow::left_or_right(cv::Mat dispmap){
-    int seuil = 75;
+    int seuil = 25;
     int obj_gs = object_gs_value(dispmap);
     int colsTab[dispmap.cols];
 

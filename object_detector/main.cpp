@@ -1,6 +1,18 @@
 #include "mainwindow.h"
 #include <QApplication>
 
+cv::Mat fillMatWithGrayScale(int grscl){
+    cv::Mat res(1000, 1000, CV_8UC3);
+    for(int x=0; x<res.rows-1; x++){
+        for(int y=0; y<res.cols-1; y++){
+            res.at<uchar>(x, y) = grscl;
+
+        }
+    }
+    return res;
+}
+
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -23,11 +35,14 @@ int main(int argc, char *argv[])
     cv::Mat disp2 = w.dispMap(left2, right2);
     cv::Mat disp3 = w.dispMap(left3, right3);
 
+
+
     cv::imshow("1", disp1);
     cv::imshow("2", disp2);
     cv::imshow("3", disp3);
 
     int base_value = w.object_gs_value(disp2);
+
     fprintf(stderr, "Base_value : %d\n", base_value);
 
 
@@ -35,9 +50,9 @@ int main(int argc, char *argv[])
     fprintf(stderr, "For 2, object is : %d\n", w.forward_or_backward(base_value, disp2));
     fprintf(stderr, "For 3, object is : %d\n", w.forward_or_backward(base_value, disp3));
 
-    /*fprintf(stderr, "For 1, object is : %d\n", w.left_or_right(disp1));
+    fprintf(stderr, "For 1, object is : %d\n", w.left_or_right(disp1));
     fprintf(stderr, "For 2, object is : %d\n", w.left_or_right(disp2));
-    fprintf(stderr, "For 3, object is : %d\n", w.left_or_right(disp3));*/
+    fprintf(stderr, "For 3, object is : %d\n", w.left_or_right(disp3));
 
     return a.exec();
 }
