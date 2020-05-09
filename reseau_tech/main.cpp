@@ -24,17 +24,28 @@ static int sizeMaxImage = height*width;
 static int bufferSize = 60000;
 
 //Convertie un tableau à deux dimension en une image Mat
-void bytesToImage_Left(vector<uchar> bytes)
+Mat bytesToImage_Left(vector<uchar> bytes)
 {
     Mat image_l = imdecode(bytes,IMREAD_ANYCOLOR);
-    imshow("test",image_l);
-    waitKey(0);
+    if(image_l.empty())
+        cout << "l'image est vide !!" <<endl;
+    cout << image_l.size << endl;
+    //imshow("test",image_l);
+    //waitKey(0);
+
+    return image_l;
 }
 
-void bytesToImage_Right(vector<uchar> bytes)
+Mat bytesToImage_Right(vector<uchar> bytes)
 {
-    Mat image_r = imdecode(bytes,IMREAD_GRAYSCALE);
-    imshow("test",image_r);
+    Mat image_r = imdecode(bytes,IMREAD_ANYCOLOR);
+    if(image_r.empty())
+        cout << "l'image est vide !!" <<endl;
+    cout << image_r.size << endl;
+    //imshow("test",image_r);
+    //waitKey(0);
+
+    return image_r;
 }
 
 int main(int argc, char *argv[])
@@ -86,11 +97,17 @@ int main(int argc, char *argv[])
 
 
     //while receiv data
-    //ImageProcessing imgProcess;
+    ImageProcessing imgProcess;
     vector<uchar> bytes;
     char buf[bufferSize];     //buffer qui stocke les données reçu par le client
     int bytesRecv = 0;
     bool image_alternate = false;
+    Mat image_l;
+    Mat image_r;
+
+    int gs_value = 0;
+    bool gs_value_on = false;
+
     while(true){
 
         //clear buffer
@@ -107,22 +124,38 @@ int main(int argc, char *argv[])
             break;
         }
 
-        for(int i = 0; i < bytesRecv; i++){
+        for(int i = 0; i < bytesRecv; i++)
             bytes.push_back(static_cast<unsigned char>(buf[i]));
-        }
-        if(bytes.empty()){printf("VIDE");}else(printf("Size = %d\n", bytes.size()));
+
+        if(bytes.empty())
+            cout << "c'est vide !!";
+        else
+            cout << "bytes size = " << bytes.size() << endl;
+
         if(image_alternate){
            //image right
-            printf("droite\n");
-            bytesToImage_Right(bytes);
+            image_r = bytesToImage_Right(bytes).clone();
             bytes.clear();
             //on fait la carte de disparité
+            Mat disp = imgProcess.dispMap(image_l, image_r).clone();
+            if(!gs_value_on){
+                gs_value = imgProcess.object_gs_value(disp);
+                gs_value_on = true;
+            }
+            int res = imgProcess.forward_or_backward(gs_value,disp);
+            char msg[100];
+            sprintf(msg,"%d", res);
+            send(clientSocket,msg,strlen(msg),0);
+
+            image_alternate = false;
         }
         else{
             //image left
-            printf("gauche\n");
-            bytesToImage_Left(bytes);
+            image_l = bytesToImage_Left(bytes).clone();
             bytes.clear();
+            char* msg = "Image left receive !!";
+            image_alternate = true;
+            send(clientSocket,msg,strlen(msg),0);
         }
     }
     close(clientSocket);

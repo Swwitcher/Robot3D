@@ -10,11 +10,10 @@ class ImageProcessing
 {
 public:
     ImageProcessing();
-    int find_objet_grayscale(cv::Mat dispmap);
-    int standard_color(cv::Mat dispmap);
     cv::Mat dispMap(cv::Mat left, cv::Mat right);
-    int object_dist(cv::Mat dispmap);
-    int object_deg(cv::Mat dispmap);
+    int object_gs_value(cv::Mat dispmap);
+    int left_or_right(cv::Mat dispmap);
+    int forward_or_backward(int base_value, cv::Mat dispmap);
 };
 
 #endif // IMAGEPROCESSING_H
