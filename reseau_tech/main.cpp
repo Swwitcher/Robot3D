@@ -26,8 +26,9 @@ static int bufferSize = 60000;
 //Convertie un tableau à deux dimension en une image Mat
 void bytesToImage_Left(vector<uchar> bytes)
 {
-    Mat image_l = imdecode(bytes,IMREAD_GRAYSCALE);
+    Mat image_l = imdecode(bytes,IMREAD_ANYCOLOR);
     imshow("test",image_l);
+    waitKey(0);
 }
 
 void bytesToImage_Right(vector<uchar> bytes)
@@ -109,14 +110,17 @@ int main(int argc, char *argv[])
         for(int i = 0; i < bytesRecv; i++){
             bytes.push_back(static_cast<unsigned char>(buf[i]));
         }
+        if(bytes.empty()){printf("VIDE");}else(printf("Size = %d\n", bytes.size()));
         if(image_alternate){
            //image right
+            printf("droite\n");
             bytesToImage_Right(bytes);
             bytes.clear();
             //on fait la carte de disparité
         }
         else{
             //image left
+            printf("gauche\n");
             bytesToImage_Left(bytes);
             bytes.clear();
         }

@@ -20,33 +20,55 @@ public class Client : MonoBehaviour {
 	private System.Text.ASCIIEncoding encoded = new System.Text.ASCIIEncoding ();
 
 	void Awake(){
-		/*serverSocket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+		serverSocket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 		IPAddress remoteIPAdress = IPAddress.Parse (serverIp);
 		IPEndPoint remoteEndPoint = new IPEndPoint (remoteIPAdress, port);
 		singleton = this;
-		serverSocket.Connect (remoteEndPoint); */
+		serverSocket.Connect (remoteEndPoint); 
 
-		//Tests
+		/*Tests
 		Texture2D text = getText2D(leftCam);
-		byte[] b = textToByte(text);
-		print(b.Length);
+		byte[] leftCamBytes = text.EncodeToJPG();
+		File.WriteAllBytes(Application.dataPath + "/../test.jpg", leftCamBytes);
+		print(leftCamBytes.Length);
+		serverSocket.Send(leftCamBytes);
+		*/
 	}
-	/* void Update(){
-		
+	void Update(){
 		if (isConnected != serverSocket.Connected)
 			isConnected = serverSocket.Connected;
-		
-		
-	} */
 
-	/*void OnApplicationQuit(){
+		byte[] buf = new byte[1];
+
+		Texture2D leftText = getText2D(leftCam);
+		byte[] leftCamBytes = leftText.EncodeToJPG();
+		Destroy(leftText);
+
+		Texture2D rightText = getText2D(leftCam);
+		byte[] rightCamBytes = leftText.EncodeToJPG();
+		Destroy(rightText);
+
+		//Envoi image gauche
+		serverSocket.Send(leftCamBytes);
+		//Gauche reçu
+		serverSocket.Receive(buf);
+
+		//Envoi image droite
+		serverSocket.Send(rightCamBytes);
+		//Droite reçu et ordre dans buf
+		serverSocket.Receive(buf);
+
+		//TODO EXECUTE ORDER
+	}
+
+	void OnApplicationQuit(){
 		serverSocket.Close ();
 		serverSocket = null;  
-	}*/
+	}
 
 
 
-// Fonction trouvé sur https://answers.unity.com/questions/576012/create-texture-from-current-camera-view.html, par cchameyr (Modifié pour prendre compte une camera mCamera)
+// Fonction trouvé sur https://answers.unity.com/questions/576012/create-texture-from-current-camera-view.html, par cchameyr le 22/05/2019(Modifié pour prendre compte une camera mCamera)
 private Texture2D getText2D(Camera mCamera)
      {
 		 int mWidth = imageSidePx;
@@ -77,4 +99,5 @@ private Texture2D getText2D(Camera mCamera)
 		}
 		return res;
 	}
+
 }
