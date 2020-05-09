@@ -38,6 +38,8 @@ public class Client : MonoBehaviour {
 		if (isConnected != serverSocket.Connected)
 			isConnected = serverSocket.Connected;
 
+		if (Input.GetKeyDown("space"))
+		{
 		byte[] first_buf = new byte[100];
 		byte[] second_buf = new byte[100];
 
@@ -58,6 +60,7 @@ public class Client : MonoBehaviour {
 		//Droite reçu et ordre dans buf
 		serverSocket.Receive(second_buf);
 		treat_order(second_buf);
+		}
 	}
 
 	void OnApplicationQuit(){
@@ -105,12 +108,15 @@ public class Client : MonoBehaviour {
 		int order_nb = int.Parse(order_string);
 		switch(order_nb){
 			case 1:
-				//TODO Avancer
+				//TODO Avance
+				print("J'AVANCE");
 				break;
 			case -1:
 				//TOTO Reculer
+				print("JE RECULE");
 				break;
 			default:
+				print("C'EST OK CHEF");
 				break;
 		}
 	}
