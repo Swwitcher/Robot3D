@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public class Client : MonoBehaviour {
 
@@ -26,76 +27,44 @@ public class Client : MonoBehaviour {
 		serverSocket.Connect (remoteEndPoint); */
 
 		//Tests
-		byte[] tab = getCameraBytes(leftCam);
-		for(int i=0; i< imageSidePx*imageSidePx; i++)
-			print(System.Convert.ToInt64(tab[i]) + "\n");
-
-		Application.Quit();
-
+		Texture2D text = getText2D(leftCam);
+		File.WriteAllBytes(Application.dataPath + "/../testsave.jpg", text.EncodeToJPG());
 	}
-	// void Update(){
+	/* void Update(){
 		
-		/*if (isConnected != serverSocket.Connected)
+		if (isConnected != serverSocket.Connected)
 			isConnected = serverSocket.Connected;
-		*/
-		/* /!\ Convert CHAR to BYTE , NOT INT
-		//Send image 1 to server
-		serverSocket.Send (pixelMapToByteMap(getCamPixelTab(leftCam)));
-		//Waiting for server answer
-		while (serverSocket.Receive (recv) == 0);
-		//Send image 2 to server
-		serverSocket.Send (pixelMapToByteMap(getCamPixelTab(rightCam)));
-		//Waiting for server answer (position of the person to follow
-		while (serverSocket.Receive (recv) == 0);
-		*/
 		
-	// }
+		
+	} */
 
-	// void OnApplicationQuit(){
-		/*serverSocket.Close ();
-		serverSocket = null;  */
-	// }
+	/*void OnApplicationQuit(){
+		serverSocket.Close ();
+		serverSocket = null;  
+	}*/
 
-	Texture2D getImage(Camera cam){
-		Rect view = cam.pixelRect;
-		Texture2D texture = new Texture2D((int)view.width, (int)view.height, TextureFormat.RGB24, false);
-		texture.ReadPixels(view, 0, 0, false);
-		texture.Apply(false);
-		return texture;
-	}
 
-	Color[] getColorMap(Texture2D texture){
-		int i = 0;
-		Color[] res = new Color[texture.width*texture.height];
-		for(int y=0; y<texture.height; y++){
-			for(int x=0; x<texture.width; x++){
-				res[i] = texture.GetPixel(x, y);
-				i++;
-			}
-		}
-		return res;
-	}
 
-	byte[] colorToByteMap(Color[] map){
-		byte[] res = new byte[map.Length];
-		char c;
-		int gray;
-		byte b;
-		for(int i=0; i<map.Length; i++){
-			//Set to grayscale
-			gray = (int)(map[i].r + map[i].g + map[i].b)/3;
-			//Conversions 
-			c = System.Convert.ToChar(gray);
-			b = System.Convert.ToByte(c);
-			//Assign
-			res[i] = b;
-		}
-		return res;
-	}
-
-	byte[] getCameraBytes(Camera cam){
-		Texture2D t = getImage(cam);
-		Color[] cMap = getColorMap(t);
-		return colorToByteMap(cMap);
-	} 
+// Fonction trouvé sur https://answers.unity.com/questions/576012/create-texture-from-current-camera-view.html, par cchameyr (Modifié pour prendre compte une camera mCamera)
+private Texture2D getText2D(Camera mCamera)
+     {
+		 int mWidth = imageSidePx;
+		 int mHeight = imageSidePx;
+         Rect rect = new Rect(0, 0, mWidth, mHeight);
+         RenderTexture renderTexture = new RenderTexture(mWidth, mHeight, 24);
+         Texture2D screenShot = new Texture2D(mWidth, mHeight, TextureFormat.RGBA32, false);
+ 
+         mCamera.targetTexture = renderTexture;
+         mCamera.Render();
+ 
+         RenderTexture.active = renderTexture;
+         screenShot.ReadPixels(rect, 0, 0);
+ 
+         mCamera.targetTexture = null;
+         RenderTexture.active = null;
+ 
+         Destroy(renderTexture);
+         renderTexture = null;
+         return screenShot;
+     }
 }
