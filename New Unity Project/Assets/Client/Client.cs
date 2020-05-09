@@ -38,27 +38,26 @@ public class Client : MonoBehaviour {
 		if (isConnected != serverSocket.Connected)
 			isConnected = serverSocket.Connected;
 
-		byte[] buf = new byte[1];
+		byte[] first_buf = new byte[100];
+		byte[] second_buf = new byte[100];
 
 		Texture2D leftText = getText2D(leftCam);
 		byte[] leftCamBytes = leftText.EncodeToJPG();
 		Destroy(leftText);
 
-		Texture2D rightText = getText2D(leftCam);
-		byte[] rightCamBytes = leftText.EncodeToJPG();
+		Texture2D rightText = getText2D(rightCam);
+		byte[] rightCamBytes = rightText.EncodeToJPG();
 		Destroy(rightText);
 
 		//Envoi image gauche
 		serverSocket.Send(leftCamBytes);
 		//Gauche reçu
-		serverSocket.Receive(buf);
-
+		serverSocket.Receive(first_buf);
 		//Envoi image droite
 		serverSocket.Send(rightCamBytes);
 		//Droite reçu et ordre dans buf
-		serverSocket.Receive(buf);
-
-		//TODO EXECUTE ORDER
+		serverSocket.Receive(second_buf);
+		treat_order(second_buf);
 	}
 
 	void OnApplicationQuit(){
@@ -69,8 +68,8 @@ public class Client : MonoBehaviour {
 
 
 // Fonction trouvé sur https://answers.unity.com/questions/576012/create-texture-from-current-camera-view.html, par cchameyr le 22/05/2019(Modifié pour prendre compte une camera mCamera)
-private Texture2D getText2D(Camera mCamera)
-     {
+	private Texture2D getText2D(Camera mCamera)
+    {
 		 int mWidth = imageSidePx;
 		 int mHeight = imageSidePx;
          Rect rect = new Rect(0, 0, mWidth, mHeight);
@@ -89,7 +88,7 @@ private Texture2D getText2D(Camera mCamera)
          Destroy(renderTexture);
          renderTexture = null;
          return screenShot;
-     }
+    }
 
 	private byte[] textToByte(Texture2D text){
 		Color[] colormap = text.GetPixels();
@@ -100,4 +99,19 @@ private Texture2D getText2D(Camera mCamera)
 		return res;
 	}
 
+	private void treat_order(byte[] order){
+		string order_string = System.Text.Encoding.UTF8.GetString(order);
+		print(order_string);
+		int order_nb = int.Parse(order_string);
+		switch(order_nb){
+			case 1:
+				//TODO Avancer
+				break;
+			case -1:
+				//TOTO Reculer
+				break;
+			default:
+				break;
+		}
+	}
 }
