@@ -21,7 +21,7 @@ using namespace cv;
 
 static int width = 480, height = 480;
 static int sizeMaxImage = height*width;
-static int bufferSize = 60000;
+static int bufferSize = 65000;
 
 //Convertie un tableau à deux dimension en une image Mat
 Mat bytesToImage_Left(vector<uchar> bytes)
@@ -109,10 +109,8 @@ int main(int argc, char *argv[])
     bool gs_value_on = false;
 
     while(true){
-
         //clear buffer
         memset(buf, 0, bufferSize);
-
         //wait for a message
         bytesRecv = recv(clientSocket, buf, bufferSize, 0);
         if(bytesRecv == -1){
@@ -142,7 +140,10 @@ int main(int argc, char *argv[])
                 gs_value = imgProcess.object_gs_value(disp);
                 gs_value_on = true;
             }
-            int res = imgProcess.forward_or_backward(gs_value,disp);
+            int res;
+
+            if((res = imgProcess.left_or_right(disp)) == 0)
+                res = imgProcess.forward_or_backward(gs_value,disp);
             char msg[100];
             sprintf(msg,"%d", res);
             send(clientSocket,msg,strlen(msg),0);
@@ -153,7 +154,8 @@ int main(int argc, char *argv[])
             //image left
             image_l = bytesToImage_Left(bytes).clone();
             bytes.clear();
-            char* msg = "Image left receive !!";
+            char msg[100];
+            sprintf(msg, "%d", 0);
             image_alternate = true;
             send(clientSocket,msg,strlen(msg),0);
         }

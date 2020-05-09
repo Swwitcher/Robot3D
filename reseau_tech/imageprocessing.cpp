@@ -11,14 +11,14 @@ cv::Mat ImageProcessing::dispMap(cv::Mat left, cv::Mat right){
     //
     sgbm->setBlockSize(5);
     sgbm->setMinDisparity(0);
-    sgbm->setNumDisparities(64);
+    sgbm->setNumDisparities(16);
     sgbm->setDisp12MaxDiff(-1);
-    sgbm->setSpeckleRange(93);
-    sgbm->setSpeckleWindowSize(921);
+    sgbm->setSpeckleRange(0);
+    sgbm->setSpeckleWindowSize(0);
     sgbm->setP1(0);
-    sgbm->setP2(694);
+    sgbm->setP2(0);
     sgbm->setPreFilterCap(1);
-    sgbm->setUniquenessRatio(34);
+    sgbm->setUniquenessRatio(0);
     //
     sgbm->setMode(cv::StereoSGBM::MODE_SGBM_3WAY);
     sgbm->compute(left, right, cv_res);
@@ -35,8 +35,7 @@ cv::Mat ImageProcessing::dispMap(cv::Mat left, cv::Mat right){
  * @return return the grayscale value of the object on the disparity map
  */
 int ImageProcessing::object_gs_value(cv::Mat dispmap){
-    const double seuil = 2000
-            ;
+    const double seuil = 2000;
     int colorTab[255];
 
     //Init tab
@@ -67,11 +66,12 @@ int ImageProcessing::object_gs_value(cv::Mat dispmap){
  * @return -1 if the object is too close, 1 if it's too far, 0 otherwise
  */
 int ImageProcessing::forward_or_backward(int base_value, cv::Mat dispmap){
+    int approx = 0;
     int obj_gs = object_gs_value(dispmap);
     //error
     if(obj_gs == -1) return -2;
     //Good dist
-    if(obj_gs == base_value) return 0;
+    if(obj_gs > obj_gs-approx && obj_gs < obj_gs+approx) return 0;
     //Too close
     if(obj_gs > base_value) return -1;
     //Too far
@@ -88,6 +88,7 @@ int ImageProcessing::forward_or_backward(int base_value, cv::Mat dispmap){
  */
 int ImageProcessing::left_or_right(cv::Mat dispmap){
     int seuil = 25;
+    int approx = 0;
     int obj_gs = object_gs_value(dispmap);
     int colsTab[dispmap.cols];
 
@@ -98,7 +99,7 @@ int ImageProcessing::left_or_right(cv::Mat dispmap){
     for(int y=0; y<dispmap.cols; y++){
         for(int x=0; x<dispmap.rows; x++){
             index = (int)dispmap.at<uchar>(x, y);
-            if(index == obj_gs)
+            if(/*index == obj_gs*/ index >= obj_gs-approx && index <= obj_gs+approx)
                 colsTab[y]++;
         }
     }
@@ -116,8 +117,8 @@ int ImageProcessing::left_or_right(cv::Mat dispmap){
         }
     }
 
-    if(index_max_gs > dispmap.cols/2) return 1;
-    else return -1;
+    if(index_max_gs > dispmap.cols/2) return 2;
+    else return 3;
 
 }
 

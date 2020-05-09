@@ -14,10 +14,15 @@ public class Client : MonoBehaviour {
 	private byte[] recv = new byte[100];
 	public Camera leftCam;
 	public Camera rightCam;
+	public Transform robot;
+	public float speed = 1f;
+	public float speedRotate = 10f;
 
 	private Client singleton;
 	private Socket serverSocket;
 	private System.Text.ASCIIEncoding encoded = new System.Text.ASCIIEncoding ();
+
+	int cpt = 0;
 
 	void Awake(){
 		serverSocket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -35,11 +40,10 @@ public class Client : MonoBehaviour {
 		*/
 	}
 	void Update(){
+
 		if (isConnected != serverSocket.Connected)
 			isConnected = serverSocket.Connected;
 
-		if (Input.GetKeyDown("space"))
-		{
 		byte[] first_buf = new byte[100];
 		byte[] second_buf = new byte[100];
 
@@ -51,6 +55,9 @@ public class Client : MonoBehaviour {
 		byte[] rightCamBytes = rightText.EncodeToJPG();
 		Destroy(rightText);
 
+		File.WriteAllBytes(Application.dataPath + "/../left.jpg", leftCamBytes);
+		File.WriteAllBytes(Application.dataPath + "/../right.jpg", rightCamBytes);
+
 		//Envoi image gauche
 		serverSocket.Send(leftCamBytes);
 		//Gauche reçu
@@ -60,7 +67,7 @@ public class Client : MonoBehaviour {
 		//Droite reçu et ordre dans buf
 		serverSocket.Receive(second_buf);
 		treat_order(second_buf);
-		}
+		
 	}
 
 	void OnApplicationQuit(){
@@ -104,16 +111,24 @@ public class Client : MonoBehaviour {
 
 	private void treat_order(byte[] order){
 		string order_string = System.Text.Encoding.UTF8.GetString(order);
-		print(order_string);
+		//print(order_string);
 		int order_nb = int.Parse(order_string);
 		switch(order_nb){
-			case 1:
-				//TODO Avance
+			case -1:
+				robot.transform.Translate(0f, 0f, speed*Time.deltaTime);
 				print("J'AVANCE");
 				break;
-			case -1:
-				//TOTO Reculer
+			case 1:
+				robot.transform.Translate(0f, 0f, speed*Time.deltaTime*-1);
 				print("JE RECULE");
+				break;
+			case 2:
+				robot.transform.Rotate(0f, speedRotate*Time.deltaTime, 0f);
+				print("DROITE");
+				break;
+			case 3:
+				robot.transform.Rotate(0f, -speedRotate*Time.deltaTime, 0f);
+				print("GAUCHE");
 				break;
 			default:
 				print("C'EST OK CHEF");
