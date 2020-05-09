@@ -21,19 +21,19 @@ using namespace cv;
 
 static int width = 480, height = 480;
 static int sizeMaxImage = height*width;
-static int bufferSize = 4800;
+static int bufferSize = 60000;
 
 //Convertie un tableau à deux dimension en une image Mat
-void bytesToImage_Left(vector<char> bytes)
+void bytesToImage_Left(vector<uchar> bytes)
 {
     Mat image_l = imdecode(bytes,IMREAD_GRAYSCALE);
-//    imshow("test",image);
+    imshow("test",image_l);
 }
 
-void bytesToImage_Right(vector<char> bytes)
+void bytesToImage_Right(vector<uchar> bytes)
 {
     Mat image_r = imdecode(bytes,IMREAD_GRAYSCALE);
-//    imshow("test",image);
+    imshow("test",image_r);
 }
 
 int main(int argc, char *argv[])
@@ -85,14 +85,11 @@ int main(int argc, char *argv[])
 
 
     //while receiv data
-    ImageProcessing imgProcess;
-
+    //ImageProcessing imgProcess;
+    vector<uchar> bytes;
     char buf[bufferSize];     //buffer qui stocke les données reçu par le client
-    int bytesRecv = 0;  //nb d'octet reçu par le serveur
-    int totalSize = 0;  //nb total d'octet reçu
-    //on créer un vector pour stocker chaque octet de l'image
-    vector<char> image_data;
-
+    int bytesRecv = 0;
+    bool image_alternate = false;
     while(true){
 
         //clear buffer
@@ -109,34 +106,19 @@ int main(int argc, char *argv[])
             break;
         }
 
-        //cout << "Début réception des données : " << string(buf, 0, bytesRecv) << endl;
-
-        totalSize += bytesRecv;
-
-        //si on reçoit un message du client pour arreter le serveur
-        if(string(buf, 0, bytesRecv) == "quit"){
-            char* msg = "Conection terminated !";
-            send(clientSocket,msg,strlen(msg),0);
-            cout << "Client disconnected !" << endl;
-            return 0;
+        for(int i = 0; i < bytesRecv; i++){
+            bytes.push_back(static_cast<unsigned char>(buf[i]));
         }
-        else if(totalSize >= sizeMaxImage){
-            //on save l'image
-            cout << "Image received ! " << totalSize << endl;
-            bytesToImage_Left(image_data);
-            totalSize = 0;
-            char* msg = "All packet receive !";
-            send(clientSocket,msg,strlen(msg),0);
+        if(image_alternate){
+           //image right
+            bytesToImage_Right(bytes);
+            bytes.clear();
+            //on fait la carte de disparité
         }
         else{
-            cout << "Début réception des données : " << string(buf, 0, bytesRecv) << endl;
-            cout << "Taille reçue = " << bytesRecv << endl;
-            for(int i = 0; i < bytesRecv; i++){
-                image_data.push_back(buf[i]);
-            }
-
-            char* msg = "Image packet received !";
-            send(clientSocket,msg,strlen(msg),0);
+            //image left
+            bytesToImage_Left(bytes);
+            bytes.clear();
         }
     }
     close(clientSocket);

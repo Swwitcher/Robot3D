@@ -15,13 +15,17 @@ using namespace cv;
 
 int cpt = 0;
 
-char* matToByte(Mat image){
+vector<uchar> matToByte(Mat image){
     int size = image.total() * image.elemSize();
     cout << "size = " << size << endl;
-    char *bytes = new char[size];
-    memcpy(bytes, image.data, size*sizeof(char));
-    cout << sizeof(bytes) << endl;
-    return bytes;
+    vector<uchar> tmp;
+    for(int i = 0; i < size; i++)
+        tmp.push_back(image.data[i]);
+//    char *bytes = new char[size];
+//    memcpy(bytes, image.data, size*sizeof(char));
+    //cout << sizeof(bytes) << endl;
+    cout << "vector size = " << tmp.size() << endl;
+    return tmp;
 }
 
 int main()
@@ -50,23 +54,34 @@ int main()
     }
 
     //	While loop:
-    char buf[5000];
-    char* userInput;
+    char buf[2304];
+    vector<uchar> userInput;
     int cpt = 0;
     //cout << img << endl;
-    Mat image = imread("/home/kindred/Bureau/Licence_3/projet-semestre6/Robot3D/test.jpeg",IMREAD_GRAYSCALE);
+    Mat image = imread("/home/kindred/Bureau/Licence_3/projet-semestre6/Robot3D/test.jpg",IMREAD_GRAYSCALE);
     imshow("zbruh", image);
     cv::waitKey(0);
-    //userInput = matToByte(image);
     userInput = matToByte(image);
-    cout << "taille données = " << strlen(userInput) << endl;
+    cout << "taille données = " << userInput.size() << endl;
+
+    int i = 0;
 
     do {
         //		Enter lines of text
         cout << "> ";
         //getline(cin, userInput);
         //		Send to server
-        int sendRes = send(sock, userInput, strlen(userInput), 0);
+        uchar buffer[2304];
+        for(i = 0; i < 2304;i++){
+            if(!userInput.empty()){
+                buffer[i] = userInput.front();
+            }
+        }
+        userInput.erase(userInput.begin(),userInput.begin()+i);
+
+        cout << "buffer size = "<< strlen(buffer) << endl;
+        int sendRes = send(sock, buffer, strlen(buffer), 0);
+
         if (sendRes == -1)
         {
             cout << "Could not send to server! Whoops!\r\n";
@@ -74,8 +89,8 @@ int main()
         }
 
         //		Wait for response
-        memset(buf, 0, 4800);
-        int bytesReceived = recv(sock, buf, 4800, 0);
+        memset(buf, 0, 9600);
+        int bytesReceived = recv(sock, buf, 9600, 0);
         if (bytesReceived == -1)
         {
             cout << "There was an error getting response from server\r\n";
