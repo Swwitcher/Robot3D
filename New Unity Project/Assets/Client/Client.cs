@@ -28,7 +28,8 @@ public class Client : MonoBehaviour {
 
 		//Tests
 		Texture2D text = getText2D(leftCam);
-		File.WriteAllBytes(Application.dataPath + "/../testsave.jpg", text.EncodeToJPG());
+		byte[] b = textToByte(text);
+		print(b.Length);
 	}
 	/* void Update(){
 		
@@ -67,4 +68,13 @@ private Texture2D getText2D(Camera mCamera)
          renderTexture = null;
          return screenShot;
      }
+
+	private byte[] textToByte(Texture2D text){
+		Color[] colormap = text.GetPixels();
+		byte[] res = new byte[imageSidePx*imageSidePx];
+		for(int i=0; i<imageSidePx; i++){
+			res[i] = System.Convert.ToByte(colormap[i].grayscale * 100.0);
+		}
+		return res;
+	}
 }

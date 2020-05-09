@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 
 
     //while receiv data
-    ImageProcessing imgProcess = new ImageProcessing();
+    //ImageProcessing imgProcess = new ImageProcessing();
 
     char buf[bufferSize];     //buffer qui stocke les données reçu par le client
     int bytesRecv = 0;  //nb d'octet reçu par le serveur
@@ -101,8 +101,11 @@ int main(int argc, char *argv[])
 
 
     while(true){
-
-        //clear buffer
+        char b[480*480];
+        recv(clientSocket, buf, 480*480, 0);
+        cv::Mat m = cv::imdecode(b, IMREAD_GRAYSCALE);
+        cv::imshow("heho", m);
+        /*//clear buffer
         memset(buf, 0, bufferSize);
 
         //wait for a message
@@ -146,7 +149,7 @@ int main(int argc, char *argv[])
             }
             char* msg = "Image packet received !";
             send(clientSocket,msg,strlen(msg),0);
-        }
+        }*/
     }
     close(clientSocket);
     //close socket
