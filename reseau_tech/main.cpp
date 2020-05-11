@@ -129,15 +129,17 @@ int main(int argc, char *argv[])
             cout << "c'est vide !!";
         else
             cout << "bytes size = " << bytes.size() << endl;
-
+        printf("GS VALUE = %d\n", gs_value);
         if(image_alternate){
            //image right
             image_r = bytesToImage_Right(bytes).clone();
             bytes.clear();
             //on fait la carte de disparité
             Mat disp = imgProcess.dispMap(image_l, image_r).clone();
+            imshow("Disp", disp);
+            waitKey(10);
             if(!gs_value_on){
-                gs_value = imgProcess.object_gs_value(disp);
+                gs_value = imgProcess.obj_pix_nb(disp);/*imgProcess.object_gs_value(disp)*/;
                 gs_value_on = true;
             }
             int res;

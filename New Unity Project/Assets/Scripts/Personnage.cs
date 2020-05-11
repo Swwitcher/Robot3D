@@ -16,8 +16,8 @@ public class Personnage: MonoBehaviour
         if(Input.GetKey(KeyCode.Q))
             transform.Translate(-speed*Time.deltaTime, 0f, 0f);
         if(Input.GetKey(KeyCode.S))
-            transform.Translate(0f, 0f, -speed*Time.deltaTime);
+            transform.Translate(0f, 0f, -speed*Time.deltaTime*0.5f);
         if(Input.GetKey(KeyCode.D))
-            transform.Translate(speed*Time.deltaTime, 0f, 0f);
+            transform.Translate(speed*Time.deltaTime*0.5f, 0f, 0f);
     }
 }

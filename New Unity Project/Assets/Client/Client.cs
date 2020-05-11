@@ -55,8 +55,10 @@ public class Client : MonoBehaviour {
 		byte[] rightCamBytes = rightText.EncodeToJPG();
 		Destroy(rightText);
 
-		File.WriteAllBytes(Application.dataPath + "/../left.jpg", leftCamBytes);
-		File.WriteAllBytes(Application.dataPath + "/../right.jpg", rightCamBytes);
+		if(Input.GetKey(KeyCode.P)){
+			File.WriteAllBytes(Application.dataPath + "/../left.jpg", leftCamBytes);
+			File.WriteAllBytes(Application.dataPath + "/../right.jpg", rightCamBytes);
+		}	
 
 		//Envoi image gauche
 		serverSocket.Send(leftCamBytes);
@@ -129,6 +131,9 @@ public class Client : MonoBehaviour {
 			case 3:
 				robot.transform.Rotate(0f, -speedRotate*Time.deltaTime, 0f);
 				print("GAUCHE");
+				break;
+			case -2:
+				print("ERROR");
 				break;
 			default:
 				print("C'EST OK CHEF");

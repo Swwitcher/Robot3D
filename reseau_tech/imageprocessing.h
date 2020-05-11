@@ -14,6 +14,8 @@ public:
     int object_gs_value(cv::Mat dispmap);
     int left_or_right(cv::Mat dispmap);
     int forward_or_backward(int base_value, cv::Mat dispmap);
+
+    int obj_pix_nb(cv::Mat dispmap);
 };
 
 #endif // IMAGEPROCESSING_H

@@ -9,13 +9,13 @@ cv::Mat ImageProcessing::dispMap(cv::Mat left, cv::Mat right){
     cv::Ptr<cv::StereoSGBM> sgbm = cv::StereoSGBM::create(0, 16, 10);
     cv::Mat cv_res, disp;
     //
-    sgbm->setBlockSize(5);
+    sgbm->setBlockSize(21);
     sgbm->setMinDisparity(0);
     sgbm->setNumDisparities(16);
-    sgbm->setDisp12MaxDiff(-1);
+    sgbm->setDisp12MaxDiff(21);
     sgbm->setSpeckleRange(0);
     sgbm->setSpeckleWindowSize(0);
-    sgbm->setP1(0);
+    sgbm->setP1(2048);
     sgbm->setP2(0);
     sgbm->setPreFilterCap(1);
     sgbm->setUniquenessRatio(0);
@@ -28,6 +28,7 @@ cv::Mat ImageProcessing::dispMap(cv::Mat left, cv::Mat right){
 
 
 //////////////////// OBJECT DETECTION ////////////////////////
+
 
 /**
  * @brief return the grayscale value of the object on the disparity map
@@ -59,6 +60,55 @@ int ImageProcessing::object_gs_value(cv::Mat dispmap){
     return -1;
 }
 
+
+
+/**
+ * @brief Return the number of pixel of the object on the dispmap
+ * @param dispmap the disparity map to consider
+ * @return the number of pixels of the object
+ */
+int ImageProcessing::obj_pix_nb(cv::Mat dispmap){
+
+    int approx = 0;
+    int obj_gs = object_gs_value(dispmap);
+    int res = 0, pix_gs;
+    for(int x=0; x<dispmap.rows; x++){
+        for(int y=0; y<dispmap.cols; y++){
+            pix_gs = (int)dispmap.at<uchar>(x, y);
+            if(pix_gs >=obj_gs-approx && pix_gs <=obj_gs+approx)
+                res++;
+        }
+    }
+    return res;
+
+    //Other algorithm, look for the width of the object
+    /*
+    int pix_gs;
+    int seuil = 20;
+    int gs_value = object_gs_value(dispmap);
+    int tab[dispmap.rows];
+    for(int x=0; x<dispmap.rows; x++){
+        for(int y=0; y<dispmap.cols; y++){
+            pix_gs = (int)dispmap.at<uchar>(x, y);
+            if(pix_gs == gs_value)
+                tab[x]++;
+        }
+    }
+    std::sort(tab, tab+480);
+    int tmp = 0;
+    for(int i=0; i<480; i++)
+        if(tab[i] > seuil){
+            tmp = i;
+            break;
+        }
+
+    printf("MEDIANE = %d\n", tab[240]);
+
+
+    return tab[(480-tmp)/2];
+    */
+}
+
 /**
  * @brief check if the object is to far or to close
  * @param base_value the base value to consider
@@ -67,15 +117,17 @@ int ImageProcessing::object_gs_value(cv::Mat dispmap){
  */
 int ImageProcessing::forward_or_backward(int base_value, cv::Mat dispmap){
     int approx = 0;
-    int obj_gs = object_gs_value(dispmap);
+    //int obj_gs = object_gs_value(dispmap);
+    int obj_gs = obj_pix_nb(dispmap);
     //error
     if(obj_gs == -1) return -2;
     //Good dist
-    if(obj_gs > obj_gs-approx && obj_gs < obj_gs+approx) return 0;
+    if(obj_gs > base_value-approx && obj_gs < base_value+approx) return 0;
     //Too close
     if(obj_gs > base_value) return -1;
     //Too far
     if(obj_gs < base_value) return 1;
+
 
     //error
     return -2;
@@ -88,7 +140,6 @@ int ImageProcessing::forward_or_backward(int base_value, cv::Mat dispmap){
  */
 int ImageProcessing::left_or_right(cv::Mat dispmap){
     int seuil = 25;
-    int approx = 0;
     int obj_gs = object_gs_value(dispmap);
     int colsTab[dispmap.cols];
 
@@ -99,7 +150,7 @@ int ImageProcessing::left_or_right(cv::Mat dispmap){
     for(int y=0; y<dispmap.cols; y++){
         for(int x=0; x<dispmap.rows; x++){
             index = (int)dispmap.at<uchar>(x, y);
-            if(/*index == obj_gs*/ index >= obj_gs-approx && index <= obj_gs+approx)
+            if(index == obj_gs)
                 colsTab[y]++;
         }
     }
