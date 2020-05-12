@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{B2B58FB2-4462-6B0C-A872-40DD957E5FE0}</ProjectGuid>
+    <ProjectGuid>{E598A4B4-DB10-F97D-F92C-90A72FE0172B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -54,22 +54,23 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Client\Client.cs" />
-     <Compile Include="Assets\Scripts\distance.cs" />
+     <Compile Include="Assets\Scripts\Distance.cs" />
      <Compile Include="Assets\Scripts\Personnage.cs" />
+     <Compile Include="Assets\Scripts\Switch_camera.cs" />
  <Reference Include="Unity.TextMeshPro.Editor">
- <HintPath>/home/pierre/Bureau/S6/Projet_Tech/Robot3D/New Unity Project/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+ <HintPath>/home/pierre/Bureau/S6/Projet_Tech/Robot3D/Simulation_Robot/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
  </Reference>
  <Reference Include="Unity.PackageManagerUI.Editor">
- <HintPath>/home/pierre/Bureau/S6/Projet_Tech/Robot3D/New Unity Project/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
+ <HintPath>/home/pierre/Bureau/S6/Projet_Tech/Robot3D/Simulation_Robot/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
  </Reference>
  <Reference Include="Unity.CollabProxy.Editor">
- <HintPath>/home/pierre/Bureau/S6/Projet_Tech/Robot3D/New Unity Project/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
+ <HintPath>/home/pierre/Bureau/S6/Projet_Tech/Robot3D/Simulation_Robot/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
  </Reference>
  <Reference Include="Unity.TextMeshPro">
- <HintPath>/home/pierre/Bureau/S6/Projet_Tech/Robot3D/New Unity Project/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
+ <HintPath>/home/pierre/Bureau/S6/Projet_Tech/Robot3D/Simulation_Robot/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Analytics.DataPrivacy">
- <HintPath>/home/pierre/Bureau/S6/Projet_Tech/Robot3D/New Unity Project/Library/ScriptAssemblies/Unity.Analytics.DataPrivacy.dll</HintPath>
+ <HintPath>/home/pierre/Bureau/S6/Projet_Tech/Robot3D/Simulation_Robot/Library/ScriptAssemblies/Unity.Analytics.DataPrivacy.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.AIModule">
  <HintPath>/home/pierre/Unity-2018.3.0f2/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
@@ -276,7 +277,7 @@
  <HintPath>/home/pierre/Unity-2018.3.0f2/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Analytics.StandardEvents">
- <HintPath>/home/pierre/Bureau/S6/Projet_Tech/Robot3D/New Unity Project/Library/PackageCache/com.unity.analytics@3.2.3/AnalyticsStandardEvents/Unity.Analytics.StandardEvents.dll</HintPath>
+ <HintPath>/home/pierre/Bureau/S6/Projet_Tech/Robot3D/Simulation_Robot/Library/PackageCache/com.unity.analytics@3.2.3/AnalyticsStandardEvents/Unity.Analytics.StandardEvents.dll</HintPath>
  </Reference>
  <Reference Include="netstandard">
  <HintPath>/home/pierre/Unity-2018.3.0f2/Editor/Data/NetStandard/ref/2.0.0/netstandard.dll</HintPath>

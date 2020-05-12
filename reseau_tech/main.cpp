@@ -23,47 +23,38 @@ static int width = 480, height = 480;
 static int sizeMaxImage = height*width;
 static int bufferSize = 65000;
 
-//Convertie un tableau à deux dimension en une image Mat
-Mat bytesToImage_Left(vector<uchar> bytes)
+/**
+ * @brief convert a byte vector into a Mat
+ * @param bytes the vector to consider (Bytes need to encode a JPG image)
+ * @return a Mat (That you can use as an image)
+ */
+Mat bytesToImage(vector<uchar> bytes)
 {
     Mat image_l = imdecode(bytes,IMREAD_ANYCOLOR);
     if(image_l.empty())
-        cout << "l'image est vide !!" <<endl;
+        cout << "Empty image !!" <<endl;
     cout << image_l.size << endl;
-    //imshow("test",image_l);
-    //waitKey(0);
 
     return image_l;
 }
 
-Mat bytesToImage_Right(vector<uchar> bytes)
-{
-    Mat image_r = imdecode(bytes,IMREAD_ANYCOLOR);
-    if(image_r.empty())
-        cout << "l'image est vide !!" <<endl;
-    cout << image_r.size << endl;
-    //imshow("test",image_r);
-    //waitKey(0);
-
-    return image_r;
-}
 
 int main(int argc, char *argv[])
 {
     //create socket
     int listening = socket(AF_INET, SOCK_STREAM, 0);
     if (listening == -1){
-        cerr << "le socket ne fonctionne pas" << endl;
+        cerr << "Socket is not working !" << endl;
         return -1;
     }
     //bind socket
     sockaddr_in hint;
     hint.sin_family = AF_INET;
     hint.sin_port = htons(54000);
-    inet_pton(AF_INET, "127.0.0.1", &hint.sin_addr);//transforme un mobre en array d'integer
+    inet_pton(AF_INET, "127.0.0.1", &hint.sin_addr);
 
     if(bind(listening, (sockaddr*)&hint, sizeof(hint)) == -1){
-        cerr << "bind impossible avec le port/ip fourni !" << endl;
+        cerr << "Cannot bind with this ip / port !" << endl;
         return -2;
     }
     //listen socket
@@ -99,7 +90,7 @@ int main(int argc, char *argv[])
     //while receiv data
     ImageProcessing imgProcess;
     vector<uchar> bytes;
-    char buf[bufferSize];     //buffer qui stocke les données reçu par le client
+    char buf[bufferSize];     //store recieved data
     int bytesRecv = 0;
     bool image_alternate = false;
     Mat image_l;
@@ -126,20 +117,20 @@ int main(int argc, char *argv[])
             bytes.push_back(static_cast<unsigned char>(buf[i]));
 
         if(bytes.empty())
-            cout << "c'est vide !!";
+            cout << "Empty";
         else
             cout << "bytes size = " << bytes.size() << endl;
-        printf("GS VALUE = %d\n", gs_value);
+
         if(image_alternate){
-           //image right
-            image_r = bytesToImage_Right(bytes).clone();
+           //right image
+            image_r = bytesToImage(bytes).clone();
             bytes.clear();
-            //on fait la carte de disparité
+            //Disparity map generation
             Mat disp = imgProcess.dispMap(image_l, image_r).clone();
-            imshow("Disp", disp);
-            waitKey(10);
+            //imshow("Disp", disp);
+            //waitKey(1);
             if(!gs_value_on){
-                gs_value = imgProcess.obj_pix_nb(disp);/*imgProcess.object_gs_value(disp)*/;
+                gs_value = imgProcess.obj_pix_nb(disp);
                 gs_value_on = true;
             }
             int res;
@@ -153,8 +144,8 @@ int main(int argc, char *argv[])
             image_alternate = false;
         }
         else{
-            //image left
-            image_l = bytesToImage_Left(bytes).clone();
+            //Left image
+            image_l = bytesToImage(bytes).clone();
             bytes.clear();
             char msg[100];
             sprintf(msg, "%d", 0);

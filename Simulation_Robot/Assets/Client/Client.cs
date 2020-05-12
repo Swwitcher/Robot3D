@@ -58,7 +58,8 @@ public class Client : MonoBehaviour {
 		if(Input.GetKey(KeyCode.P)){
 			File.WriteAllBytes(Application.dataPath + "/../left.jpg", leftCamBytes);
 			File.WriteAllBytes(Application.dataPath + "/../right.jpg", rightCamBytes);
-		}	
+		}
+	
 
 		//Envoi image gauche
 		serverSocket.Send(leftCamBytes);

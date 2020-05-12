@@ -247,6 +247,7 @@ GameObject:
   m_Component:
   - component: {fileID: 571017775}
   - component: {fileID: 571017776}
+  - component: {fileID: 571017777}
   m_Layer: 0
   m_Name: Robot
   m_TagString: Untagged
@@ -289,8 +290,21 @@ MonoBehaviour:
   leftCam: {fileID: 1381068876}
   rightCam: {fileID: 1713163693}
   robot: {fileID: 571017775}
-  speed: 1
-  speedRotate: 50
+  speed: 1.2
+  speedRotate: 100
+--- !u!114 &571017777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 571017774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 538114b7fcce23540b5856fd9322b6e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 1708713792}
 --- !u!1 &792235779
 GameObject:
   m_ObjectHideFlags: 0
@@ -484,8 +498,9 @@ GameObject:
   - component: {fileID: 979840376}
   - component: {fileID: 979840375}
   - component: {fileID: 979840374}
+  - component: {fileID: 979840377}
   m_Layer: 0
-  m_Name: Camera
+  m_Name: side camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -548,13 +563,27 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 979840373}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 10, z: 0}
+  m_LocalRotation: {x: 0.15349929, y: -0.6454654, z: 0.13942318, w: 0.73510104}
+  m_LocalPosition: {x: 13.7, y: 8.21, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 156.067, y: 97.52, z: 180.428}
+--- !u!114 &979840377
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 979840373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0d8fd85bacfffa4098f2bd67024d5af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  c1: {fileID: 1381068876}
+  c2: {fileID: 979840375}
 --- !u!1 &1041421870
 GameObject:
   m_ObjectHideFlags: 0
@@ -932,7 +961,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1713163692
 Transform:
   m_ObjectHideFlags: 0

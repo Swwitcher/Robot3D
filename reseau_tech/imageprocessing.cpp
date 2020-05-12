@@ -36,7 +36,7 @@ cv::Mat ImageProcessing::dispMap(cv::Mat left, cv::Mat right){
  * @return return the grayscale value of the object on the disparity map
  */
 int ImageProcessing::object_gs_value(cv::Mat dispmap){
-    const double seuil = 2000;
+    const double seuil = 1700;
     int colorTab[255];
 
     //Init tab
@@ -81,7 +81,7 @@ int ImageProcessing::obj_pix_nb(cv::Mat dispmap){
     }
     return res;
 
-    //Other algorithm, look for the width of the object
+    //Other algorithm, look for the width of the object (Not working very well)
     /*
     int pix_gs;
     int seuil = 20;
@@ -94,18 +94,14 @@ int ImageProcessing::obj_pix_nb(cv::Mat dispmap){
                 tab[x]++;
         }
     }
-    std::sort(tab, tab+480);
+    std::sort(tab, tab+dispmap.rows);
     int tmp = 0;
-    for(int i=0; i<480; i++)
+    for(int i=0; i<dispmap.rows; i++)
         if(tab[i] > seuil){
             tmp = i;
             break;
         }
-
-    printf("MEDIANE = %d\n", tab[240]);
-
-
-    return tab[(480-tmp)/2];
+    return tab[(dispmap.rows-tmp)/2];
     */
 }
 
@@ -139,7 +135,7 @@ int ImageProcessing::forward_or_backward(int base_value, cv::Mat dispmap){
  * @return 1 if the object is on the right, -1 on the left, 0 center
  */
 int ImageProcessing::left_or_right(cv::Mat dispmap){
-    int seuil = 25;
+    int seuil = 100;
     int obj_gs = object_gs_value(dispmap);
     int colsTab[dispmap.cols];
 
@@ -147,8 +143,8 @@ int ImageProcessing::left_or_right(cv::Mat dispmap){
         colsTab[i] = 0;
     }
     int index;
-    for(int y=0; y<dispmap.cols; y++){
-        for(int x=0; x<dispmap.rows; x++){
+    for(int x=0; x<dispmap.rows; x++){
+        for(int y=0; y<dispmap.cols; y++){
             index = (int)dispmap.at<uchar>(x, y);
             if(index == obj_gs)
                 colsTab[y]++;
@@ -157,11 +153,9 @@ int ImageProcessing::left_or_right(cv::Mat dispmap){
 
     //Object centered
     if(colsTab[dispmap.cols/2] >= seuil) return 0;
-    //fprintf(stderr, "TEST %d\n", colsTab[dispmap.cols/2]);
     int index_max_gs = -1;
     int tmp_max = 0;
     for(int i=0; i<dispmap.cols; i++){
-        //fprintf(stderr, "ColsTab[%d] = %d\n", i, colsTab[i]);
         if(colsTab[i] > tmp_max){
             index_max_gs = i;
             tmp_max = colsTab[i];
