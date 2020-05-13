@@ -16,3 +16,6 @@ Commandes clavier :
 - (français) Z, S, Q, D (anglais) W, A, S, D:  respectivement avancer/reculer sur l'axe Z et aller à gauche/droite sur l'axe X
 - Espace : Changer de vue (vue robot / vue laterale) 
 - P : Enregistre les images vue par le robot (Robot3D/SimulationRobot/left.jpg et right.jpg)
+
+Auteurs : 
+UNG Pierre, EL HOULALI Théo, LHERITIER Alexis, GRUILLOT Ewan 
