@@ -18,7 +18,8 @@ Commandes clavier :
 Utilisation de Unity :
 Vous contrôlerez un cylindre qui, une fois déplacé avec Z,Q,S,D (respectivement en anglais W, A, S, D) sera suivi par le robot. Le robot restera à 1m de distance de l’objet. 
 
-![Figure 1](https://github.com/Swwitcher/Robot3D/tree/master/Image_README/Capture2.PNG?raw=true)
+![figure1](https://user-images.githubusercontent.com/23144322/81841012-12938e00-954a-11ea-8f3b-101d2fda7ffc.PNG)
+
 figure 1: Capture d’écran de la fenêtre de simulation avec le sol (vert),
  le (rouge), le robot (gris) et le cylindre (noir).
  
