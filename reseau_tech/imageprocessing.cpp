@@ -6,6 +6,8 @@ ImageProcessing::ImageProcessing()
 }
 
 cv::Mat ImageProcessing::dispMap(cv::Mat left, cv::Mat right){
+    //cv::cvtColor(left, left, CV_RGB2GRAY);
+    //cv::cvtColor(right, right, CV_RGB2GRAY);
     cv::Ptr<cv::StereoSGBM> sgbm = cv::StereoSGBM::create(0, 16, 10);
     cv::Mat cv_res, disp;
     //
@@ -36,7 +38,7 @@ cv::Mat ImageProcessing::dispMap(cv::Mat left, cv::Mat right){
  * @return return the grayscale value of the object on the disparity map
  */
 int ImageProcessing::object_gs_value(cv::Mat dispmap){
-    const double seuil = 1700;
+    const double seuil = 1200;
     int colorTab[255];
 
     //Init tab

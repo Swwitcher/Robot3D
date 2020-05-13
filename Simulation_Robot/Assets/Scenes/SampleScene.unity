@@ -291,7 +291,7 @@ MonoBehaviour:
   rightCam: {fileID: 1713163693}
   robot: {fileID: 571017775}
   speed: 1.2
-  speedRotate: 10
+  speedRotate: 30
 --- !u!114 &571017777
 MonoBehaviour:
   m_ObjectHideFlags: 0
