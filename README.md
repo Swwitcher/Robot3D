@@ -3,6 +3,7 @@ Configuration requise :
 - OpenCV 3.2.0
 - Unity3D 2018.3.0
 - Qt 5.9.5 (Version utilisée par Qt Creator 4.5.2)
+
 Lancement des programmes :
 - Se placer à la racine du projet
 - Compiler le serveur avec la commande mkdir build && cd build && qmake -qt=5 ../reseautech/ && make
