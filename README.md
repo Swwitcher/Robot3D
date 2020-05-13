@@ -25,11 +25,15 @@ figure 1: Capture d’écran de la fenêtre de simulation avec le sol (vert),
  
 La vue du robot par défaut est celle de la caméra gauche.
 
-![Capture](https://user-images.githubusercontent.com/23144322/81841272-79b14280-954a-11ea-91eb-f0c97662bf2a.PNG)figure 2: Capture d’écran de la vue du robot.
+![Capture](https://user-images.githubusercontent.com/23144322/81841272-79b14280-954a-11ea-91eb-f0c97662bf2a.PNG)
+
+figure 2: Capture d’écran de la vue du robot.
  
 Une fois la touche espace utilisé, nous passons à la vue latérale.
 
-![Capture4](https://user-images.githubusercontent.com/23144322/81841280-7cac3300-954a-11ea-8f5b-c60598331ad9.PNG)figure 3: Capture d’écran de la vue latérale.
+![Capture4](https://user-images.githubusercontent.com/23144322/81841280-7cac3300-954a-11ea-8f5b-c60598331ad9.PNG)
+
+figure 3: Capture d’écran de la vue latérale.
  
  
 Lors d’une déconnexion du client (volontaire ou accidentelle), le serveur se déconnecte automatiquement. Pour réutiliser la simulation, il faut à nouveau lancer le serveur (sans compiler une nouvelle fois), puis “Run” sur Unity. 
